@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { TaskStatus, ListTasksRequest } from '../../src/types/pb/a2a.js';
+import { TaskStatus, ListTasksRequest, Task } from '../../src/types/codecs.js';
 
 describe('google.protobuf.Timestamp protobuf codec (Issue #641)', () => {
   describe('TaskStatus.timestamp', () => {
@@ -132,6 +132,31 @@ describe('google.protobuf.Timestamp protobuf codec (Issue #641)', () => {
         statusTimestampAfter: 'invalid-date',
       };
       expect(() => ListTasksRequest.fromJSON(input)).toThrow(/Value is not a valid timestamp/);
+    });
+  });
+
+  describe('Task.status.timestamp', () => {
+    it('normalizes status timestamp when parsed via Task.fromJSON', () => {
+      const input = {
+        id: 'task-1',
+        status: {
+          state: 'TASK_STATE_WORKING',
+          timestamp: '2026-01-01T05:30:00+05:30',
+        },
+      };
+      const parsed = Task.fromJSON(input);
+      expect(parsed.status?.timestamp).toBe('2026-01-01T00:00:00Z');
+    });
+
+    it('rejects invalid status timestamp when parsed via Task.fromJSON', () => {
+      const input = {
+        id: 'task-1',
+        status: {
+          state: 'TASK_STATE_WORKING',
+          timestamp: 'not-a-timestamp',
+        },
+      };
+      expect(() => Task.fromJSON(input)).toThrow(/Value is not a valid timestamp/);
     });
   });
 });
