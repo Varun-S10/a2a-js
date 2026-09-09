@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Part } from '../../src/types/pb/a2a.js';
+import { Part, Message, Task } from '../../src/types/codecs.js';
 
 describe('Part protobuf codec', () => {
   describe('Part.data oneof handling (google.protobuf.Value)', () => {
@@ -94,6 +94,26 @@ describe('Part protobuf codec', () => {
       const urlPart = Part.fromJSON({ url: 'https://example.com', mediaType: 'text/uri-list' });
       expect(urlPart.content).toEqual({ $case: 'url', value: 'https://example.com' });
       expect((Part.toJSON(urlPart) as Record<string, unknown>).url).toBe('https://example.com');
+    });
+
+    it('retains data: null parts inside Message.fromJSON', () => {
+      const msg = Message.fromJSON({
+        role: 'ROLE_USER',
+        parts: [{ data: null, mediaType: 'application/json' }],
+      });
+      expect(msg.parts[0]?.content).toEqual({ $case: 'data', value: null });
+      const serialized = Message.toJSON(msg) as Record<string, unknown>;
+      expect((serialized.parts as any[])[0]).toHaveProperty('data', null);
+    });
+
+    it('retains data: null parts inside Task.history Message.fromJSON', () => {
+      const task = Task.fromJSON({
+        id: 't-1',
+        history: [{ parts: [{ data: null }] }],
+      });
+      expect(task.history[0]?.parts[0]?.content).toEqual({ $case: 'data', value: null });
+      const serialized = Task.toJSON(task) as Record<string, unknown>;
+      expect((serialized.history as any[])[0]?.parts[0]).toHaveProperty('data', null);
     });
   });
 });
