@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { Part } from '../../src/types/pb/a2a.js';
+import { Part, Message } from '../../src/types/codecs.js';
+import { Part as IndexPart, Message as IndexMessage } from '../../src/index.js';
 
 describe('Part.fromJSON oneof validation (Issue #643)', () => {
   it('accepts a valid single text arm', () => {
@@ -44,6 +45,32 @@ describe('Part.fromJSON oneof validation (Issue #643)', () => {
       Part.fromJSON({ text: 'hello', raw: '+/8=', url: 'https://example.com', data: 123 })
     ).toThrow(
       'Message type "lf.a2a.v1.Part" should not have multiple "content" oneof fields: text, raw, url, data'
+    );
+  });
+
+  it('validates correctly when imported from src/index.js (@a2a-js/sdk root export)', () => {
+    expect(() => IndexPart.fromJSON({ text: 'hello', url: 'https://example.com/x' })).toThrow(
+      'Message type "lf.a2a.v1.Part" should not have multiple "content" oneof fields: text, url'
+    );
+  });
+
+  it('rejects multiple oneof arms when nested inside Message.fromJSON', () => {
+    expect(() =>
+      Message.fromJSON({
+        messageId: 'msg-1',
+        parts: [{ text: 'hello', url: 'https://example.com/x' }],
+      })
+    ).toThrow(
+      'Message type "lf.a2a.v1.Part" should not have multiple "content" oneof fields: text, url'
+    );
+
+    expect(() =>
+      IndexMessage.fromJSON({
+        messageId: 'msg-1',
+        parts: [{ text: 'hello', url: 'https://example.com/x' }],
+      })
+    ).toThrow(
+      'Message type "lf.a2a.v1.Part" should not have multiple "content" oneof fields: text, url'
     );
   });
 });
