@@ -1,5 +1,6 @@
 // `Message` translator. Key differences: v0.3 adds a `kind: 'message'`
-// discriminator, uses string-literal `role`, and omits empty arrays
+// discriminator, marks `contextId` / `taskId` truly optional (v1.0 uses
+// empty strings), uses string-literal `role`, and omits empty arrays
 // rather than emitting them.
 
 import { toCompatRole, toCoreRole } from './enums.js';
@@ -33,8 +34,8 @@ export function toCoreMessage(compatMsg: legacy.Message): V1Message {
   }
   return {
     messageId: compatMsg.messageId,
-    contextId: compatMsg.contextId,
-    taskId: compatMsg.taskId,
+    contextId: compatMsg.contextId as string,
+    taskId: compatMsg.taskId as string,
     role: toCoreRole(compatMsg.role),
     parts: compatMsg.parts.map(toCorePart),
     metadata: deepCloneMetadata(compatMsg.metadata),
