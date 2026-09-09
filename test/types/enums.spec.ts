@@ -8,7 +8,7 @@ import {
   taskStateToJSON,
   roleFromJSON,
   roleToJSON,
-} from '../../src/types/pb/a2a.js';
+} from '../../src/types/codecs.js';
 
 describe('Enum codecs and proto3 conformance (Issue #640)', () => {
   describe('TaskState', () => {

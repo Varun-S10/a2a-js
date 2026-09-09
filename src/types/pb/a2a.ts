@@ -69,11 +69,11 @@ export function taskStateFromJSON(object: any): TaskState {
     case -1:
     case "UNRECOGNIZED":
     default:
-      return typeof object === "number" ? (object as TaskState) : TaskState.UNRECOGNIZED;
+      return TaskState.UNRECOGNIZED;
   }
 }
 
-export function taskStateToJSON(object: TaskState): string | number {
+export function taskStateToJSON(object: TaskState): string {
   switch (object) {
     case TaskState.TASK_STATE_UNSPECIFIED:
       return "TASK_STATE_UNSPECIFIED";
@@ -95,7 +95,7 @@ export function taskStateToJSON(object: TaskState): string | number {
       return "TASK_STATE_AUTH_REQUIRED";
     case TaskState.UNRECOGNIZED:
     default:
-      return typeof object === "number" && object !== -1 ? object : "UNRECOGNIZED";
+      return "UNRECOGNIZED";
   }
 }
 
@@ -124,11 +124,11 @@ export function roleFromJSON(object: any): Role {
     case -1:
     case "UNRECOGNIZED":
     default:
-      return typeof object === "number" ? (object as Role) : Role.UNRECOGNIZED;
+      return Role.UNRECOGNIZED;
   }
 }
 
-export function roleToJSON(object: Role): string | number {
+export function roleToJSON(object: Role): string {
   switch (object) {
     case Role.ROLE_UNSPECIFIED:
       return "ROLE_UNSPECIFIED";
@@ -138,7 +138,7 @@ export function roleToJSON(object: Role): string | number {
       return "ROLE_AGENT";
     case Role.UNRECOGNIZED:
     default:
-      return typeof object === "number" && object !== -1 ? object : "UNRECOGNIZED";
+      return "UNRECOGNIZED";
   }
 }
 
