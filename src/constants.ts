@@ -3,6 +3,8 @@
 /** The well-known path for the agent card. */
 export const AGENT_CARD_PATH = '.well-known/agent-card.json';
 
+
+
 /** The name of the A2A extensions header used over HTTP. */
 export const HTTP_EXTENSION_HEADER = 'A2A-Extensions';
 
